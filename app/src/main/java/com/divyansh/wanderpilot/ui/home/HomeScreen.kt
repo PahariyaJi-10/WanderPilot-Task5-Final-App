@@ -11,7 +11,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(    onExploreClick: () -> Unit
+
+) {
 
     val destinations = listOf(
         "Goa",
@@ -62,7 +64,13 @@ fun HomeScreen() {
         }
 
         items(destinations) { destination ->
+            Spacer(modifier = Modifier.height(8.dp))
 
+            Button(
+                onClick =  onExploreClick
+            ) {
+                Text("Explore")
+            }
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -70,7 +78,8 @@ fun HomeScreen() {
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 4.dp
                 )
-            ) {
+            )
+            {
 
                 Column(
                     modifier = Modifier.padding(16.dp)
