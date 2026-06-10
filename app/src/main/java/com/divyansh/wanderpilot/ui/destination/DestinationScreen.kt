@@ -2,15 +2,25 @@ package com.divyansh.wanderpilot.ui.destination
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.divyansh.wanderpilot.viewmodel.WeatherViewModel
 
 @Composable
 fun DestinationDetailsScreen() {
+
+    val weatherViewModel: WeatherViewModel = viewModel()
+
+    val temperature by weatherViewModel.temperature.collectAsState()
+
+    LaunchedEffect(Unit) {
+        weatherViewModel.getWeather()
+    }
 
     Column(
         modifier = Modifier
@@ -32,6 +42,26 @@ fun DestinationDetailsScreen() {
         )
 
         Spacer(modifier = Modifier.height(20.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+
+                Text(
+                    text = "Current Weather",
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(text = temperature)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth()
