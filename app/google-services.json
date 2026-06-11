@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1026910592303",
+    "project_id": "wanderpilot",
+    "storage_bucket": "wanderpilot.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026910592303:android:62847d8d060aad1a6015da",
+        "android_client_info": {
+          "package_name": "com.divyansh.wanderpilot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvO0c3IZeNA2u-SGqNxobp0xbtXszms2g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
