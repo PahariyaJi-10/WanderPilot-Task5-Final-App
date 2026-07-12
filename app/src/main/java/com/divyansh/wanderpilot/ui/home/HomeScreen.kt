@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.divyansh.wanderpilot.firestore.FirestoreRepository
 
 @Composable
 fun HomeScreen(
@@ -16,9 +17,10 @@ fun HomeScreen(
     onLogoutClick: () -> Unit
 ) {
 
-    var searchText by remember {
-        mutableStateOf("")
-    }
+    var searchText by remember { mutableStateOf("") }
+    var message by remember { mutableStateOf("") }
+
+    val firestoreRepository = FirestoreRepository()
 
     val destinations = listOf(
         "🏖 Goa",
@@ -60,9 +62,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                text = "Where would you like to go today?"
-            )
+            Text("Where would you like to go today?")
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -82,6 +82,15 @@ fun HomeScreen(
             )
 
             Spacer(modifier = Modifier.height(12.dp))
+
+            if (message.isNotEmpty()) {
+                Text(
+                    text = message,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+            }
         }
 
         items(destinations) { destination ->
@@ -90,9 +99,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 4.dp
-                )
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
 
                 Column(
@@ -124,6 +131,19 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Explore")
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedButton(
+                        onClick = {
+                            firestoreRepository.saveTrip(destination) { success, result ->
+                                message = result
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Save Trip")
                     }
                 }
             }

@@ -41,7 +41,8 @@ android {
 }
 
 dependencies {
-    implementation("com.google.firebase:firebase-auth-ktx:23.1.0")
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
