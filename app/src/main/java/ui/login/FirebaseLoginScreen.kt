@@ -1,4 +1,4 @@
-package com.divyansh.wanderpilot.ui.signup
+package com.divyansh.wanderpilot.ui.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -8,9 +8,9 @@ import androidx.compose.ui.unit.dp
 import com.divyansh.wanderpilot.auth.AuthRepository
 
 @Composable
-fun SignupScreen(
-    onSignupSuccess: () -> Unit,
-    onLoginClick: () -> Unit
+fun FirebaseLoginScreen(
+    onLoginSuccess: () -> Unit,
+    onSignupClick: () -> Unit
 ) {
 
     var email by remember { mutableStateOf("") }
@@ -26,7 +26,7 @@ fun SignupScreen(
     ) {
 
         Text(
-            text = "Create Account",
+            text = "Welcome Back",
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -52,31 +52,29 @@ fun SignupScreen(
 
         Button(
             onClick = {
-                authRepository.signup(email, password) { success, result ->
+                authRepository.login(email, password) { success, result ->
 
                     message = result
 
                     if (success) {
-                        onSignupSuccess()
+                        onLoginSuccess()
                     }
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Sign Up")
+            Text("Login")
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         TextButton(
-            onClick = {
-                onLoginClick()
-            }
+            onClick = onSignupClick
         ) {
-            Text("Already have an account? Login")
+            Text("Don't have an account? Sign Up")
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(text = message)
     }

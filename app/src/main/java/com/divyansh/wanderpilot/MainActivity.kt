@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import com.divyansh.wanderpilot.ui.destination.DestinationDetailsScreen
 import com.divyansh.wanderpilot.ui.home.HomeScreen
+import com.divyansh.wanderpilot.ui.login.FirebaseLoginScreen
+import com.divyansh.wanderpilot.ui.signup.SignupScreen
 import com.divyansh.wanderpilot.ui.theme.WanderPilotTheme
 
 class MainActivity : ComponentActivity() {
@@ -14,20 +16,48 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+
             WanderPilotTheme {
 
-                var showDetails by remember {
-                    mutableStateOf(false)
+                var currentScreen by remember {
+                    mutableStateOf("login")
                 }
 
-                if (showDetails) {
-                    DestinationDetailsScreen()
-                } else {
-                    HomeScreen(
-                        onExploreClick = {
-                            showDetails = true
-                        }
-                    )
+                when (currentScreen) {
+
+                    "login" -> {
+                        FirebaseLoginScreen(
+                            onLoginSuccess = {
+                                currentScreen = "home"
+                            },
+                            onSignupClick = {
+                                currentScreen = "signup"
+                            }
+                        )
+                    }
+
+                    "signup" -> {
+                        SignupScreen(
+                            onSignupSuccess = {
+                                currentScreen = "home"
+                            },
+                            onLoginClick = {
+                                currentScreen = "login"
+                            }
+                        )
+                    }
+
+                    "home" -> {
+                        HomeScreen(
+                            onExploreClick = {
+                                currentScreen = "destination"
+                            }
+                        )
+                    }
+
+                    "destination" -> {
+                        DestinationDetailsScreen()
+                    }
                 }
             }
         }
