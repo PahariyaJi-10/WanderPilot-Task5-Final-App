@@ -1,5 +1,6 @@
 package com.divyansh.wanderpilot.firestore
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -17,6 +18,7 @@ class FirestoreRepository {
 
         if (user == null) {
             onResult(false, "User not logged in")
+            Log.e("Firestore", "Current user is null")
             return
         }
 
@@ -30,10 +32,16 @@ class FirestoreRepository {
             .collection("savedTrips")
             .add(trip)
             .addOnSuccessListener {
+
+                Log.d("Firestore", "Trip Saved Successfully")
+
                 onResult(true, "Trip Saved")
             }
-            .addOnFailureListener {
-                onResult(false, it.localizedMessage ?: "Error")
+            .addOnFailureListener { e ->
+
+                Log.e("Firestore", e.message ?: "Firestore Error")
+
+                onResult(false, e.message ?: "Firestore Error")
             }
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.divyansh.wanderpilot.firestore.FirestoreRepository
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HomeScreen(
@@ -20,7 +21,8 @@ fun HomeScreen(
     var searchText by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
 
-    val firestoreRepository = FirestoreRepository()
+    val firestoreRepository = remember { FirestoreRepository() }
+    val currentUser = FirebaseAuth.getInstance().currentUser
 
     val destinations = listOf(
         "🏖 Goa",
@@ -49,6 +51,13 @@ fun HomeScreen(
             Text(
                 text = "Explore the World 🌍",
                 fontSize = 16.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = currentUser?.email ?: "No User Logged In",
+                style = MaterialTheme.typography.bodySmall
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -99,7 +108,9 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 4.dp
+                )
             ) {
 
                 Column(
@@ -137,9 +148,20 @@ fun HomeScreen(
 
                     OutlinedButton(
                         onClick = {
+
+                            message = "Saving..."
+
                             firestoreRepository.saveTrip(destination) { success, result ->
+
                                 message = result
+
+                                if (success) {
+                                    println("Trip Saved Successfully")
+                                } else {
+                                    println("Firestore Error: $result")
+                                }
                             }
+
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
