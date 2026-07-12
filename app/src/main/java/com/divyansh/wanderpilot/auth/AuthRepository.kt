@@ -4,7 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 class AuthRepository {
 
-    private val auth = FirebaseAuth.getInstance()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     fun signup(
         email: String,
@@ -13,12 +13,15 @@ class AuthRepository {
     ) {
 
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener {
+            .addOnCompleteListener { task ->
 
-                if (it.isSuccessful) {
+                if (task.isSuccessful) {
                     onResult(true, "Signup Successful")
                 } else {
-                    onResult(false, it.exception?.message ?: "Error")
+                    onResult(
+                        false,
+                        task.exception?.localizedMessage ?: "Signup Failed"
+                    )
                 }
             }
     }
@@ -30,12 +33,15 @@ class AuthRepository {
     ) {
 
         auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener {
+            .addOnCompleteListener { task ->
 
-                if (it.isSuccessful) {
+                if (task.isSuccessful) {
                     onResult(true, "Login Successful")
                 } else {
-                    onResult(false, it.exception?.message ?: "Error")
+                    onResult(
+                        false,
+                        task.exception?.localizedMessage ?: "Login Failed"
+                    )
                 }
             }
     }
@@ -43,4 +49,6 @@ class AuthRepository {
     fun logout() {
         auth.signOut()
     }
+
+    fun getCurrentUser() = auth.currentUser
 }

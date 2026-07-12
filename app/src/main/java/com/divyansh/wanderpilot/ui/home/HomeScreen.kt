@@ -9,17 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Icon
 
 @Composable
 fun HomeScreen(
-    onExploreClick: () -> Unit
+    onExploreClick: () -> Unit,
+    onLogoutClick: () -> Unit
 ) {
 
     var searchText by remember {
@@ -32,7 +26,6 @@ fun HomeScreen(
         "🏰 Jaipur",
         "🌴 Kerala",
         "🌆 Mumbai"
-
     )
 
     LazyColumn(
@@ -42,6 +35,7 @@ fun HomeScreen(
     ) {
 
         item {
+
             Text(
                 text = "WanderPilot",
                 fontSize = 30.sp,
@@ -55,8 +49,16 @@ fun HomeScreen(
                 fontSize = 16.sp
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onLogoutClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Logout")
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
-            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Where would you like to go today?"
@@ -106,7 +108,7 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = when(destination) {
+                        text = when (destination) {
                             "🏖 Goa" -> "Beautiful beaches and vibrant nightlife."
                             "🏔 Manali" -> "Snow-covered mountains and adventure sports."
                             "🏰 Jaipur" -> "Royal heritage, forts and palaces."
@@ -114,10 +116,12 @@ fun HomeScreen(
                             else -> "City life, beaches and entertainment."
                         }
                     )
+
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Button(
-                        onClick = onExploreClick
+                        onClick = onExploreClick,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Explore")
                     }

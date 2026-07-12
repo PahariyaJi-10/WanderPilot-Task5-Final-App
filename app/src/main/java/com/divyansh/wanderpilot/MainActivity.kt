@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
+import com.google.firebase.auth.FirebaseAuth
 import com.divyansh.wanderpilot.ui.destination.DestinationDetailsScreen
 import com.divyansh.wanderpilot.ui.home.HomeScreen
 import com.divyansh.wanderpilot.ui.login.FirebaseLoginScreen
@@ -16,7 +17,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-
             WanderPilotTheme {
 
                 var currentScreen by remember {
@@ -51,6 +51,10 @@ class MainActivity : ComponentActivity() {
                         HomeScreen(
                             onExploreClick = {
                                 currentScreen = "destination"
+                            },
+                            onLogoutClick = {
+                                FirebaseAuth.getInstance().signOut()
+                                currentScreen = "login"
                             }
                         )
                     }
