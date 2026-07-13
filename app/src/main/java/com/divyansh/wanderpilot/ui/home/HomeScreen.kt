@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HomeScreen(
-    onExploreClick: () -> Unit,
+    onExploreClick: (String) -> Unit,
     onLogoutClick: () -> Unit
 ) {
 
@@ -25,11 +25,11 @@ fun HomeScreen(
     val currentUser = FirebaseAuth.getInstance().currentUser
 
     val destinations = listOf(
-        "🏖 Goa",
-        "🏔 Manali",
-        "🏰 Jaipur",
-        "🌴 Kerala",
-        "🌆 Mumbai"
+        "Goa",
+        "Manali",
+        "Jaipur",
+        "Kerala",
+        "Mumbai"
     )
 
     LazyColumn(
@@ -71,23 +71,44 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text("Where would you like to go today?")
+            Text(
+                "Search Any Destination",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
                 value = searchText,
                 onValueChange = { searchText = it },
-                label = { Text("Search Destination") },
+                label = { Text("Enter City Name") },
                 modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = {
+
+                    if (searchText.isNotBlank()) {
+                        onExploreClick(searchText.trim())
+                    } else {
+                        message = "Please enter a city name."
+                    }
+
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Search")
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Popular Destinations",
+                text = "⭐ Popular Destinations",
                 fontSize = 22.sp,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.Bold
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -127,18 +148,30 @@ fun HomeScreen(
 
                     Text(
                         text = when (destination) {
-                            "🏖 Goa" -> "Beautiful beaches and vibrant nightlife."
-                            "🏔 Manali" -> "Snow-covered mountains and adventure sports."
-                            "🏰 Jaipur" -> "Royal heritage, forts and palaces."
-                            "🌴 Kerala" -> "Backwaters, greenery and relaxation."
-                            else -> "City life, beaches and entertainment."
+
+                            "Goa" ->
+                                "Beautiful beaches and vibrant nightlife."
+
+                            "Manali" ->
+                                "Snow-covered mountains and adventure sports."
+
+                            "Jaipur" ->
+                                "Royal heritage, forts and palaces."
+
+                            "Kerala" ->
+                                "Backwaters, greenery and relaxation."
+
+                            else ->
+                                "City life, beaches and entertainment."
                         }
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Button(
-                        onClick = onExploreClick,
+                        onClick = {
+                            onExploreClick(destination)
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Explore")
@@ -151,15 +184,12 @@ fun HomeScreen(
 
                             message = "Saving..."
 
-                            firestoreRepository.saveTrip(destination) { success, result ->
+                            firestoreRepository.saveTrip(
+                                destination
+                            ) { _, result ->
 
                                 message = result
 
-                                if (success) {
-                                    println("Trip Saved Successfully")
-                                } else {
-                                    println("Firestore Error: $result")
-                                }
                             }
 
                         },

@@ -12,14 +12,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.divyansh.wanderpilot.viewmodel.WeatherViewModel
 
 @Composable
-fun DestinationDetailsScreen() {
+fun DestinationDetailsScreen(
+    city: String
+) {
 
     val weatherViewModel: WeatherViewModel = viewModel()
 
     val temperature by weatherViewModel.temperature.collectAsState()
+    val cityName by weatherViewModel.cityName.collectAsState()
 
-    LaunchedEffect(Unit) {
-        weatherViewModel.getWeather()
+    LaunchedEffect(city) {
+        weatherViewModel.getWeather(city)
     }
 
     Column(
@@ -30,7 +33,7 @@ fun DestinationDetailsScreen() {
     ) {
 
         Text(
-            text = "🏖 Goa",
+            text = "📍 ${if (cityName.isNotEmpty()) cityName else city}",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold
         )
@@ -38,7 +41,7 @@ fun DestinationDetailsScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Goa is famous for its beautiful beaches, vibrant nightlife, water sports, and Portuguese heritage."
+            text = "Discover beautiful places, explore local attractions, and plan your next journey with WanderPilot."
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -57,7 +60,10 @@ fun DestinationDetailsScreen() {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = temperature)
+                Text(
+                    text = temperature,
+                    fontSize = 22.sp
+                )
             }
         }
 
@@ -77,7 +83,7 @@ fun DestinationDetailsScreen() {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text("November - February")
+                Text("October - March")
             }
         }
 
@@ -97,7 +103,7 @@ fun DestinationDetailsScreen() {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text("₹15,000 - ₹25,000")
+                Text("₹15,000 - ₹30,000")
             }
         }
 
@@ -111,16 +117,16 @@ fun DestinationDetailsScreen() {
             ) {
 
                 Text(
-                    text = "Popular Attractions",
+                    text = "Travel Tips",
                     fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text("• Baga Beach")
-                Text("• Calangute Beach")
-                Text("• Fort Aguada")
-                Text("• Dudhsagar Falls")
+                Text("• Check the weather before travelling")
+                Text("• Carry essential documents")
+                Text("• Book hotels in advance")
+                Text("• Explore local food and culture")
             }
         }
 

@@ -13,41 +13,51 @@ class WeatherViewModel : ViewModel() {
     private val _temperature = MutableStateFlow("Loading...")
     val temperature: StateFlow<String> = _temperature
 
-    fun getWeather() {
+    private val _cityName = MutableStateFlow("")
+    val cityName: StateFlow<String> = _cityName
+
+    fun getWeather(city: String) {
 
         viewModelScope.launch {
 
             try {
 
-                val response = RetrofitInstance.api.getWeather(
-                    latitude = 15.2993,
-                    longitude = 74.1240
-                )
+                // Step 1: Search city
+                val geoResponse =
+                    RetrofitInstance.geocodingApi.searchCity(city)
 
-                if (response.isSuccessful) {
+                if (!geoResponse.isSuccessful || geoResponse.body()?.results.isNullOrEmpty()) {
 
-                    val weather = response.body()
+                    _temperature.value = "City not found"
+                    return@launch
+                }
 
-                    if (weather != null) {
+                val location = geoResponse.body()!!.results!![0]
 
-                        _temperature.value =
-                            "${weather.current_weather.temperature} °C"
+                _cityName.value = location.name
 
-                    } else {
+                // Step 2: Get weather using coordinates
+                val weatherResponse =
+                    RetrofitInstance.weatherApi.getWeather(
+                        latitude = location.latitude,
+                        longitude = location.longitude
+                    )
 
-                        _temperature.value = "No weather data"
+                if (weatherResponse.isSuccessful && weatherResponse.body() != null) {
 
-                        Log.e("WeatherAPI", "Response body is null")
-                    }
+                    val weather = weatherResponse.body()!!.current_weather
+
+                    _temperature.value =
+                        "${weather.temperature} °C"
 
                 } else {
 
                     _temperature.value =
-                        "HTTP ${response.code()}"
+                        "Failed to load weather"
 
                     Log.e(
                         "WeatherAPI",
-                        "HTTP ${response.code()} : ${response.message()}"
+                        "HTTP ${weatherResponse.code()}"
                     )
                 }
 

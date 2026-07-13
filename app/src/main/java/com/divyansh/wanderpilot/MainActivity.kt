@@ -4,12 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
-import com.google.firebase.auth.FirebaseAuth
 import com.divyansh.wanderpilot.ui.destination.DestinationDetailsScreen
 import com.divyansh.wanderpilot.ui.home.HomeScreen
 import com.divyansh.wanderpilot.ui.login.FirebaseLoginScreen
 import com.divyansh.wanderpilot.ui.signup.SignupScreen
 import com.divyansh.wanderpilot.ui.theme.WanderPilotTheme
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
 
@@ -17,10 +17,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+
             WanderPilotTheme {
 
                 var currentScreen by remember {
                     mutableStateOf("login")
+                }
+
+                // Selected city for dynamic search
+                var selectedCity by remember {
+                    mutableStateOf("Goa")
                 }
 
                 when (currentScreen) {
@@ -49,18 +55,29 @@ class MainActivity : ComponentActivity() {
 
                     "home" -> {
                         HomeScreen(
-                            onExploreClick = {
+
+                            onExploreClick = { city ->
+
+                                selectedCity = city
                                 currentScreen = "destination"
+
                             },
+
                             onLogoutClick = {
+
                                 FirebaseAuth.getInstance().signOut()
                                 currentScreen = "login"
+
                             }
                         )
                     }
 
                     "destination" -> {
-                        DestinationDetailsScreen()
+
+                        DestinationDetailsScreen(
+                            city = selectedCity
+                        )
+
                     }
                 }
             }
