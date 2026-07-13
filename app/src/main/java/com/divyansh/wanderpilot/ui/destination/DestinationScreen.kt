@@ -19,7 +19,7 @@ fun DestinationDetailsScreen(
     val weatherViewModel: WeatherViewModel = viewModel()
 
     val temperature by weatherViewModel.temperature.collectAsState()
-    val cityName by weatherViewModel.cityName.collectAsState()
+    val location by weatherViewModel.location.collectAsState()
 
     LaunchedEffect(city) {
         weatherViewModel.getWeather(city)
@@ -33,7 +33,7 @@ fun DestinationDetailsScreen(
     ) {
 
         Text(
-            text = "📍 ${if (cityName.isNotEmpty()) cityName else city}",
+            text = "📍 ${if (location.isNotEmpty()) location else city}",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold
         )
@@ -49,6 +49,7 @@ fun DestinationDetailsScreen(
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
+
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
@@ -72,6 +73,7 @@ fun DestinationDetailsScreen(
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
+
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
@@ -92,6 +94,7 @@ fun DestinationDetailsScreen(
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
+
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
@@ -112,6 +115,7 @@ fun DestinationDetailsScreen(
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
+
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {

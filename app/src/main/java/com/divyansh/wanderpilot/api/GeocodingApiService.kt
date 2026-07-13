@@ -9,6 +9,8 @@ interface GeocodingApiService {
     @GET("v1/search")
     suspend fun searchCity(
         @Query("name") city: String,
-        @Query("count") count: Int = 1
+        @Query("count") count: Int = 5,
+        @Query("language") language: String = "en",
+        @Query("countryCode") countryCode: String? = null
     ): Response<GeocodingResponse>
 }
