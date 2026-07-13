@@ -1,5 +1,6 @@
 package com.divyansh.wanderpilot.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.divyansh.wanderpilot.api.RetrofitInstance
@@ -23,21 +24,39 @@ class WeatherViewModel : ViewModel() {
                     longitude = 74.1240
                 )
 
-                if (response.isSuccessful && response.body() != null) {
+                if (response.isSuccessful) {
 
-                    val temp =
-                        response.body()!!.current_weather.temperature
+                    val weather = response.body()
 
-                    _temperature.value = "$temp °C"
+                    if (weather != null) {
+
+                        _temperature.value =
+                            "${weather.current_weather.temperature} °C"
+
+                    } else {
+
+                        _temperature.value = "No weather data"
+
+                        Log.e("WeatherAPI", "Response body is null")
+                    }
 
                 } else {
 
-                    _temperature.value = "Failed to load weather"
+                    _temperature.value =
+                        "HTTP ${response.code()}"
+
+                    Log.e(
+                        "WeatherAPI",
+                        "HTTP ${response.code()} : ${response.message()}"
+                    )
                 }
 
             } catch (e: Exception) {
 
-                _temperature.value = "Network Error"
+                Log.e("WeatherAPI", "Exception", e)
+
+                _temperature.value =
+                    e.localizedMessage ?: "Network Error"
             }
         }
     }
