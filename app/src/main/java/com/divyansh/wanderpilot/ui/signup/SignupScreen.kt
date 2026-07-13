@@ -16,6 +16,7 @@ fun SignupScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
+    var loading by remember { mutableStateOf(false) }
 
     val authRepository = AuthRepository()
 
@@ -52,8 +53,17 @@ fun SignupScreen(
 
         Button(
             onClick = {
+
+                if (email.isBlank() || password.isBlank()) {
+                    message = "Please fill all fields"
+                    return@Button
+                }
+
+                loading = true
+
                 authRepository.signup(email, password) { success, result ->
 
+                    loading = false
                     message = result
 
                     if (success) {
@@ -61,17 +71,24 @@ fun SignupScreen(
                     }
                 }
             },
+            enabled = !loading,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Sign Up")
+
+            if (loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text("Sign Up")
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         TextButton(
-            onClick = {
-                onLoginClick()
-            }
+            onClick = onLoginClick
         ) {
             Text("Already have an account? Login")
         }
