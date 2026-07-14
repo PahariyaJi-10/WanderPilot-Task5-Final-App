@@ -9,9 +9,9 @@ class FirestoreRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    // -----------------------------
-    // Save Trip
-    // -----------------------------
+    // -------------------------------------------------
+    // Save Simple Trip (Existing Feature)
+    // -------------------------------------------------
     fun saveTrip(
         destination: String,
         onResult: (Boolean, String) -> Unit
@@ -45,9 +45,82 @@ class FirestoreRepository {
             }
     }
 
-    // -----------------------------
+    // -------------------------------------------------
+    // Save Complete Trip Plan (New Feature)
+    // -------------------------------------------------
+    fun saveTripPlan(
+
+        destination: String,
+
+        startDate: String,
+
+        endDate: String,
+
+        travelers: Int,
+
+        budget: String,
+
+        transport: String,
+
+        accommodation: String,
+
+        notes: String,
+
+        onResult: (Boolean, String) -> Unit
+
+    ) {
+
+        val user = auth.currentUser
+
+        if (user == null) {
+
+            onResult(false, "User not logged in")
+            return
+
+        }
+
+        val tripPlan = hashMapOf(
+
+            "destination" to destination,
+
+            "startDate" to startDate,
+
+            "endDate" to endDate,
+
+            "travelers" to travelers,
+
+            "budget" to budget,
+
+            "transport" to transport,
+
+            "accommodation" to accommodation,
+
+            "notes" to notes,
+
+            "timestamp" to System.currentTimeMillis()
+
+        )
+
+        firestore.collection("users")
+            .document(user.uid)
+            .collection("tripPlans")
+            .add(tripPlan)
+            .addOnSuccessListener {
+
+                onResult(true, "Trip Planned Successfully")
+
+            }
+            .addOnFailureListener {
+
+                onResult(false, it.message ?: "Firestore Error")
+
+            }
+
+    }
+
+    // -------------------------------------------------
     // Get Saved Trips
-    // -----------------------------
+    // -------------------------------------------------
     fun getSavedTrips(
         onResult: (List<Trip>) -> Unit
     ) {
@@ -55,8 +128,10 @@ class FirestoreRepository {
         val user = auth.currentUser
 
         if (user == null) {
+
             onResult(emptyList())
             return
+
         }
 
         firestore.collection("users")
@@ -80,6 +155,7 @@ class FirestoreRepository {
                         )
 
                     )
+
                 }
 
                 onResult(trips)
@@ -95,11 +171,12 @@ class FirestoreRepository {
                 onResult(emptyList())
 
             }
+
     }
 
-    // -----------------------------
-    // Delete Trip
-    // -----------------------------
+    // -------------------------------------------------
+    // Delete Saved Trip
+    // -------------------------------------------------
     fun deleteTrip(
         tripId: String,
         onResult: (Boolean) -> Unit
@@ -129,5 +206,7 @@ class FirestoreRepository {
                 onResult(false)
 
             }
+
     }
+
 }

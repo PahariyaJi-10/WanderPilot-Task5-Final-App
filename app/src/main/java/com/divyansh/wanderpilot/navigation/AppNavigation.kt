@@ -7,10 +7,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
+import com.divyansh.wanderpilot.firestore.FirestoreRepository
 import com.divyansh.wanderpilot.ui.components.BottomBar
 import com.divyansh.wanderpilot.ui.destination.DestinationDetailsScreen
 import com.divyansh.wanderpilot.ui.home.HomeScreen
 import com.divyansh.wanderpilot.ui.login.FirebaseLoginScreen
+import com.divyansh.wanderpilot.ui.planner.TripPlannerScreen
 import com.divyansh.wanderpilot.ui.profile.ProfileScreen
 import com.divyansh.wanderpilot.ui.saved.SavedTripsScreen
 import com.divyansh.wanderpilot.ui.signup.SignupScreen
@@ -20,6 +22,8 @@ import com.google.firebase.auth.FirebaseAuth
 fun AppNavigation() {
 
     val navController = rememberNavController()
+
+    val repository = FirestoreRepository()
 
     val currentRoute =
         navController.currentBackStackEntryAsState().value
@@ -42,9 +46,7 @@ fun AppNavigation() {
                     onHome = {
 
                         navController.navigate("home") {
-
                             launchSingleTop = true
-
                         }
 
                     },
@@ -52,9 +54,7 @@ fun AppNavigation() {
                     onSaved = {
 
                         navController.navigate("savedTrips") {
-
                             launchSingleTop = true
-
                         }
 
                     },
@@ -62,9 +62,7 @@ fun AppNavigation() {
                     onProfile = {
 
                         navController.navigate("profile") {
-
                             launchSingleTop = true
-
                         }
 
                     }
@@ -98,9 +96,7 @@ fun AppNavigation() {
                         navController.navigate("home") {
 
                             popUpTo("login") {
-
                                 inclusive = true
-
                             }
 
                         }
@@ -128,9 +124,7 @@ fun AppNavigation() {
                         navController.navigate("home") {
 
                             popUpTo("login") {
-
                                 inclusive = true
-
                             }
 
                         }
@@ -172,9 +166,7 @@ fun AppNavigation() {
                         navController.navigate("login") {
 
                             popUpTo(0) {
-
                                 inclusive = true
-
                             }
 
                         }
@@ -206,9 +198,7 @@ fun AppNavigation() {
                         navController.navigate("login") {
 
                             popUpTo(0) {
-
                                 inclusive = true
-
                             }
 
                         }
@@ -242,7 +232,89 @@ fun AppNavigation() {
                         ?: "Goa"
 
                 DestinationDetailsScreen(
-                    city = city
+
+                    city = city,
+
+                    onPlanTripClick = {
+
+                        navController.navigate("planner/$it")
+
+                    }
+
+                )
+
+            }
+
+            // ---------------- Trip Planner ----------------
+
+            composable(
+
+                route = "planner/{city}",
+
+                arguments = listOf(
+
+                    navArgument("city") {
+
+                        type = NavType.StringType
+
+                    }
+
+                )
+
+            ) { backStackEntry ->
+
+                val city =
+                    backStackEntry.arguments?.getString("city")
+                        ?: "Goa"
+
+                TripPlannerScreen(
+
+                    destination = city,
+
+                    onSaveTrip = {
+                            destination,
+                            startDate,
+                            endDate,
+                            travelers,
+                            budget,
+                            transport,
+                            accommodation,
+                            notes ->
+
+                        repository.saveTripPlan(
+
+                            destination = destination,
+
+                            startDate = startDate,
+
+                            endDate = endDate,
+
+                            travelers = travelers,
+
+                            budget = budget,
+
+                            transport = transport,
+
+                            accommodation = accommodation,
+
+                            notes = notes
+
+                        ) { success, message ->
+
+                            if (success) {
+
+                                navController.popBackStack()
+
+                            } else {
+
+                                println(message)
+
+                            }
+
+                        }
+
+                    }
+
                 )
 
             }

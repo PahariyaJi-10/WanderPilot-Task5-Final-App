@@ -13,7 +13,8 @@ import com.divyansh.wanderpilot.viewmodel.WeatherViewModel
 
 @Composable
 fun DestinationDetailsScreen(
-    city: String
+    city: String,
+    onPlanTripClick: (String) -> Unit
 ) {
 
     val weatherViewModel: WeatherViewModel = viewModel()
@@ -137,10 +138,12 @@ fun DestinationDetailsScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { },
+            onClick = {
+                onPlanTripClick(city)
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Plan Trip")
+            Text("📅 Plan Trip")
         }
     }
 }
