@@ -21,7 +21,6 @@ class FirestoreRepository {
 
         if (user == null) {
             onResult(false, "User not logged in")
-            Log.e("Firestore", "Current user is null")
             return
         }
 
@@ -36,15 +35,13 @@ class FirestoreRepository {
             .add(trip)
             .addOnSuccessListener {
 
-                Log.d("Firestore", "Trip Saved Successfully")
-
                 onResult(true, "Trip Saved")
+
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener {
 
-                Log.e("Firestore", e.message ?: "Firestore Error")
+                onResult(false, it.message ?: "Firestore Error")
 
-                onResult(false, e.message ?: "Firestore Error")
             }
     }
 
@@ -52,7 +49,7 @@ class FirestoreRepository {
     // Get Saved Trips
     // -----------------------------
     fun getSavedTrips(
-        onResult: (List<String>) -> Unit
+        onResult: (List<Trip>) -> Unit
     ) {
 
         val user = auth.currentUser
@@ -68,28 +65,69 @@ class FirestoreRepository {
             .get()
             .addOnSuccessListener { documents ->
 
-                val trips = mutableListOf<String>()
+                val trips = mutableListOf<Trip>()
 
                 for (document in documents) {
 
                     val destination =
-                        document.getString("destination")
+                        document.getString("destination") ?: ""
 
-                    if (destination != null) {
-                        trips.add(destination)
-                    }
+                    trips.add(
+
+                        Trip(
+                            id = document.id,
+                            destination = destination
+                        )
+
+                    )
                 }
 
                 onResult(trips)
+
             }
             .addOnFailureListener {
 
                 Log.e(
                     "Firestore",
-                    it.message ?: "Error loading trips"
+                    it.message ?: "Error"
                 )
 
                 onResult(emptyList())
+
+            }
+    }
+
+    // -----------------------------
+    // Delete Trip
+    // -----------------------------
+    fun deleteTrip(
+        tripId: String,
+        onResult: (Boolean) -> Unit
+    ) {
+
+        val user = auth.currentUser
+
+        if (user == null) {
+
+            onResult(false)
+            return
+
+        }
+
+        firestore.collection("users")
+            .document(user.uid)
+            .collection("savedTrips")
+            .document(tripId)
+            .delete()
+            .addOnSuccessListener {
+
+                onResult(true)
+
+            }
+            .addOnFailureListener {
+
+                onResult(false)
+
             }
     }
 }
