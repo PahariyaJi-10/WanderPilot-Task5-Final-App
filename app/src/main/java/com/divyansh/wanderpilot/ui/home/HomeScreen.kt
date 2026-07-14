@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun HomeScreen(
     onExploreClick: (String) -> Unit,
+    onSavedTripsClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
 
@@ -68,8 +69,17 @@ fun HomeScreen(
             ) {
                 Text("Logout")
             }
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = onSavedTripsClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("❤️ View Saved Trips")
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
+
 
             Text(
                 "Search Any Destination",

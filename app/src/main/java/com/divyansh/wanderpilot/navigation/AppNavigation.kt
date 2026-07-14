@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.divyansh.wanderpilot.ui.destination.DestinationDetailsScreen
 import com.divyansh.wanderpilot.ui.home.HomeScreen
 import com.divyansh.wanderpilot.ui.login.FirebaseLoginScreen
+import com.divyansh.wanderpilot.ui.saved.SavedTripsScreen
 import com.divyansh.wanderpilot.ui.signup.SignupScreen
 import com.google.firebase.auth.FirebaseAuth
 
@@ -22,44 +23,70 @@ fun AppNavigation() {
         startDestination = "login"
     ) {
 
+        // ---------------- Login ----------------
+
         composable("login") {
 
             FirebaseLoginScreen(
 
                 onLoginSuccess = {
+
                     navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
+                        popUpTo("login") {
+                            inclusive = true
+                        }
                     }
+
                 },
 
                 onSignupClick = {
+
                     navController.navigate("signup")
+
                 }
             )
         }
+
+        // ---------------- Signup ----------------
 
         composable("signup") {
 
             SignupScreen(
 
                 onSignupSuccess = {
+
                     navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
+                        popUpTo("login") {
+                            inclusive = true
+                        }
                     }
+
                 },
 
                 onLoginClick = {
+
                     navController.popBackStack()
+
                 }
             )
         }
+
+        // ---------------- Home ----------------
 
         composable("home") {
 
             HomeScreen(
 
                 onExploreClick = { city ->
+
                     navController.navigate("destination/$city")
+
+                },
+
+                onSavedTripsClick = {
+
+                    navController.navigate("savedTrips")
+
                 },
 
                 onLogoutClick = {
@@ -67,13 +94,26 @@ fun AppNavigation() {
                     FirebaseAuth.getInstance().signOut()
 
                     navController.navigate("login") {
-                        popUpTo("home") {
+
+                        popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
+
+                        launchSingleTop = true
                     }
                 }
             )
         }
+
+        // ---------------- Saved Trips ----------------
+
+        composable("savedTrips") {
+
+            SavedTripsScreen()
+
+        }
+
+        // ---------------- Destination ----------------
 
         composable(
             route = "destination/{city}",
