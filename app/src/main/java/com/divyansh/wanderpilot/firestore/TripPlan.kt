@@ -18,6 +18,8 @@ data class TripPlan(
 
     val accommodation: String = "",
 
-    val notes: String = ""
+    val notes: String = "",
+
+    val timestamp: Long = 0L
 
 )

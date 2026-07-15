@@ -46,7 +46,7 @@ class FirestoreRepository {
     }
 
     // -------------------------------------------------
-    // Save Complete Trip Plan (New Feature)
+    // Save Complete Trip Plan
     // -------------------------------------------------
     fun saveTripPlan(
 
@@ -119,7 +119,7 @@ class FirestoreRepository {
     }
 
     // -------------------------------------------------
-    // Get Saved Trips
+    // Get Saved Trips (Simple)
     // -------------------------------------------------
     fun getSavedTrips(
         onResult: (List<Trip>) -> Unit
@@ -144,14 +144,15 @@ class FirestoreRepository {
 
                 for (document in documents) {
 
-                    val destination =
-                        document.getString("destination") ?: ""
-
                     trips.add(
 
                         Trip(
+
                             id = document.id,
-                            destination = destination
+
+                            destination = document.getString("destination")
+                                ?: ""
+
                         )
 
                     )
@@ -195,6 +196,113 @@ class FirestoreRepository {
             .document(user.uid)
             .collection("savedTrips")
             .document(tripId)
+            .delete()
+            .addOnSuccessListener {
+
+                onResult(true)
+
+            }
+            .addOnFailureListener {
+
+                onResult(false)
+
+            }
+
+    }
+
+    // -------------------------------------------------
+    // Get Complete Trip Plans
+    // -------------------------------------------------
+    fun getTripPlans(
+        onResult: (List<TripPlan>) -> Unit
+    ) {
+
+        val user = auth.currentUser
+
+        if (user == null) {
+
+            onResult(emptyList())
+            return
+
+        }
+
+        firestore.collection("users")
+            .document(user.uid)
+            .collection("tripPlans")
+            .get()
+            .addOnSuccessListener { documents ->
+
+                val tripPlans = mutableListOf<TripPlan>()
+
+                for (document in documents) {
+
+                    tripPlans.add(
+
+                        TripPlan(
+
+                            id = document.id,
+
+                            destination = document.getString("destination") ?: "",
+
+                            startDate = document.getString("startDate") ?: "",
+
+                            endDate = document.getString("endDate") ?: "",
+
+                            travelers = document.getLong("travelers")?.toInt() ?: 1,
+
+                            budget = document.getString("budget") ?: "",
+
+                            transport = document.getString("transport") ?: "",
+
+                            accommodation = document.getString("accommodation") ?: "",
+
+                            notes = document.getString("notes") ?: "",
+
+                            timestamp = document.getLong("timestamp") ?: 0L
+
+                        )
+
+                    )
+
+                }
+
+                onResult(tripPlans)
+
+            }
+            .addOnFailureListener {
+
+                Log.e(
+                    "Firestore",
+                    it.message ?: "Error loading trip plans"
+                )
+
+                onResult(emptyList())
+
+            }
+
+    }
+
+    // -------------------------------------------------
+    // Delete Complete Trip Plan
+    // -------------------------------------------------
+    fun deleteTripPlan(
+        tripPlanId: String,
+        onResult: (Boolean) -> Unit
+    ) {
+
+        val user = auth.currentUser
+
+        if (user == null) {
+
+            onResult(false)
+            return
+
+        }
+
+        firestore.collection("users")
+            .document(user.uid)
+            .collection("tripPlans")
+            .document(tripPlanId)
             .delete()
             .addOnSuccessListener {
 
