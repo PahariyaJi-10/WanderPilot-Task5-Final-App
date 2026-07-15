@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun HomeScreen(
     onExploreClick: (String) -> Unit,
-    onSavedTripsClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
 
@@ -69,20 +68,11 @@ fun HomeScreen(
             ) {
                 Text("Logout")
             }
-            Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedButton(
-                onClick = onSavedTripsClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("❤️ View Saved Trips")
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
+            Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                "Search Any Destination",
+                text = "Search Any Destination",
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp
             )
@@ -102,9 +92,13 @@ fun HomeScreen(
                 onClick = {
 
                     if (searchText.isNotBlank()) {
+
                         onExploreClick(searchText.trim())
+
                     } else {
+
                         message = "Please enter a city name."
+
                     }
 
                 },
@@ -124,13 +118,16 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             if (message.isNotEmpty()) {
+
                 Text(
                     text = message,
                     color = MaterialTheme.colorScheme.primary
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
+
             }
+
         }
 
         items(destinations) { destination ->
@@ -173,6 +170,7 @@ fun HomeScreen(
 
                             else ->
                                 "City life, beaches and entertainment."
+
                         }
                     )
 
@@ -180,7 +178,9 @@ fun HomeScreen(
 
                     Button(
                         onClick = {
+
                             onExploreClick(destination)
+
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -207,8 +207,13 @@ fun HomeScreen(
                     ) {
                         Text("Save Trip")
                     }
+
                 }
+
             }
+
         }
+
     }
+
 }

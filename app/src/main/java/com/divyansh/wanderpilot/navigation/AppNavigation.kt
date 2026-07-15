@@ -153,12 +153,6 @@ fun AppNavigation() {
 
                     },
 
-                    onSavedTripsClick = {
-
-                        navController.navigate("savedTrips")
-
-                    },
-
                     onLogoutClick = {
 
                         FirebaseAuth.getInstance().signOut()
