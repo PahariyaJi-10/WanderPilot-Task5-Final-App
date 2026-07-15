@@ -10,7 +10,7 @@ class FirestoreRepository {
     private val auth = FirebaseAuth.getInstance()
 
     // -------------------------------------------------
-    // Save Simple Trip (Existing Feature)
+    // Save Simple Trip
     // -------------------------------------------------
     fun saveTrip(
         destination: String,
@@ -35,12 +35,16 @@ class FirestoreRepository {
             .add(trip)
             .addOnSuccessListener {
 
+                Log.d("Firestore", "Simple Trip Saved")
+
                 onResult(true, "Trip Saved")
 
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
 
-                onResult(false, it.message ?: "Firestore Error")
+                Log.e("Firestore", "Save Trip Failed", e)
+
+                onResult(false, e.message ?: "Firestore Error")
 
             }
     }
@@ -74,7 +78,10 @@ class FirestoreRepository {
 
         if (user == null) {
 
+            Log.e("TripPlan", "User is null")
+
             onResult(false, "User not logged in")
+
             return
 
         }
@@ -107,19 +114,36 @@ class FirestoreRepository {
             .add(tripPlan)
             .addOnSuccessListener {
 
-                onResult(true, "Trip Planned Successfully")
+                Log.d(
+                    "TripPlan",
+                    "Trip Plan Saved Successfully"
+                )
+
+                onResult(
+                    true,
+                    "Trip Planned Successfully"
+                )
 
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
 
-                onResult(false, it.message ?: "Firestore Error")
+                Log.e(
+                    "TripPlan",
+                    "Trip Plan Save Failed",
+                    e
+                )
+
+                onResult(
+                    false,
+                    e.message ?: "Firestore Error"
+                )
 
             }
 
     }
 
     // -------------------------------------------------
-    // Get Saved Trips (Simple)
+    // Get Saved Trips
     // -------------------------------------------------
     fun getSavedTrips(
         onResult: (List<Trip>) -> Unit
@@ -150,8 +174,9 @@ class FirestoreRepository {
 
                             id = document.id,
 
-                            destination = document.getString("destination")
-                                ?: ""
+                            destination =
+                                document.getString("destination")
+                                    ?: ""
 
                         )
 
@@ -159,14 +184,20 @@ class FirestoreRepository {
 
                 }
 
+                Log.d(
+                    "Firestore",
+                    "Saved Trips Loaded : ${trips.size}"
+                )
+
                 onResult(trips)
 
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
 
                 Log.e(
                     "Firestore",
-                    it.message ?: "Error"
+                    "Failed to load saved trips",
+                    e
                 )
 
                 onResult(emptyList())
@@ -199,10 +230,21 @@ class FirestoreRepository {
             .delete()
             .addOnSuccessListener {
 
+                Log.d(
+                    "Firestore",
+                    "Saved Trip Deleted"
+                )
+
                 onResult(true)
 
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
+
+                Log.e(
+                    "Firestore",
+                    "Delete Failed",
+                    e
+                )
 
                 onResult(false)
 
@@ -232,33 +274,43 @@ class FirestoreRepository {
             .get()
             .addOnSuccessListener { documents ->
 
-                val tripPlans = mutableListOf<TripPlan>()
+                val plans = mutableListOf<TripPlan>()
 
                 for (document in documents) {
 
-                    tripPlans.add(
+                    plans.add(
 
                         TripPlan(
 
                             id = document.id,
 
-                            destination = document.getString("destination") ?: "",
+                            destination =
+                                document.getString("destination") ?: "",
 
-                            startDate = document.getString("startDate") ?: "",
+                            startDate =
+                                document.getString("startDate") ?: "",
 
-                            endDate = document.getString("endDate") ?: "",
+                            endDate =
+                                document.getString("endDate") ?: "",
 
-                            travelers = document.getLong("travelers")?.toInt() ?: 1,
+                            travelers =
+                                document.getLong("travelers")
+                                    ?.toInt() ?: 1,
 
-                            budget = document.getString("budget") ?: "",
+                            budget =
+                                document.getString("budget") ?: "",
 
-                            transport = document.getString("transport") ?: "",
+                            transport =
+                                document.getString("transport") ?: "",
 
-                            accommodation = document.getString("accommodation") ?: "",
+                            accommodation =
+                                document.getString("accommodation") ?: "",
 
-                            notes = document.getString("notes") ?: "",
+                            notes =
+                                document.getString("notes") ?: "",
 
-                            timestamp = document.getLong("timestamp") ?: 0L
+                            timestamp =
+                                document.getLong("timestamp") ?: 0L
 
                         )
 
@@ -266,14 +318,20 @@ class FirestoreRepository {
 
                 }
 
-                onResult(tripPlans)
+                Log.d(
+                    "TripPlan",
+                    "Loaded ${plans.size} Trip Plans"
+                )
+
+                onResult(plans)
 
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
 
                 Log.e(
-                    "Firestore",
-                    it.message ?: "Error loading trip plans"
+                    "TripPlan",
+                    "Failed to Load Trip Plans",
+                    e
                 )
 
                 onResult(emptyList())
@@ -283,7 +341,7 @@ class FirestoreRepository {
     }
 
     // -------------------------------------------------
-    // Delete Complete Trip Plan
+    // Delete Trip Plan
     // -------------------------------------------------
     fun deleteTripPlan(
         tripPlanId: String,
@@ -306,10 +364,21 @@ class FirestoreRepository {
             .delete()
             .addOnSuccessListener {
 
+                Log.d(
+                    "TripPlan",
+                    "Trip Plan Deleted"
+                )
+
                 onResult(true)
 
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
+
+                Log.e(
+                    "TripPlan",
+                    "Delete Failed",
+                    e
+                )
 
                 onResult(false)
 

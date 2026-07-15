@@ -238,8 +238,7 @@ fun AppNavigation() {
                 )
 
             }
-
-            // ---------------- Trip Planner ----------------
+// ---------------- Trip Planner ----------------
 
             composable(
 
@@ -275,6 +274,11 @@ fun AppNavigation() {
                             accommodation,
                             notes ->
 
+                        android.util.Log.d(
+                            "TripPlan",
+                            "Reached AppNavigation"
+                        )
+
                         repository.saveTripPlan(
 
                             destination = destination,
@@ -295,13 +299,32 @@ fun AppNavigation() {
 
                         ) { success, message ->
 
+                            android.util.Log.d(
+                                "TripPlan",
+                                "Repository Result = $success"
+                            )
+
+                            android.widget.Toast.makeText(
+                                navController.context,
+                                message,
+                                android.widget.Toast.LENGTH_LONG
+                            ).show()
+
                             if (success) {
+
+                                android.util.Log.d(
+                                    "TripPlan",
+                                    "Returning to Destination Screen"
+                                )
 
                                 navController.popBackStack()
 
                             } else {
 
-                                println(message)
+                                android.util.Log.e(
+                                    "TripPlan",
+                                    message
+                                )
 
                             }
 
