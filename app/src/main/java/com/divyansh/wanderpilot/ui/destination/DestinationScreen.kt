@@ -1,10 +1,13 @@
 package com.divyansh.wanderpilot.ui.destination
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,6 +19,8 @@ fun DestinationDetailsScreen(
     city: String,
     onPlanTripClick: (String) -> Unit
 ) {
+
+    val context = LocalContext.current
 
     val weatherViewModel: WeatherViewModel = viewModel()
 
@@ -66,7 +71,9 @@ fun DestinationDetailsScreen(
                     text = temperature,
                     fontSize = 22.sp
                 )
+
             }
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -87,7 +94,9 @@ fun DestinationDetailsScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text("October - March")
+
             }
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -108,7 +117,9 @@ fun DestinationDetailsScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text("₹15,000 - ₹30,000")
+
             }
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -132,7 +143,9 @@ fun DestinationDetailsScreen(
                 Text("• Carry essential documents")
                 Text("• Book hotels in advance")
                 Text("• Explore local food and culture")
+
             }
+
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -143,7 +156,49 @@ fun DestinationDetailsScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
+
             Text("📅 Plan Trip")
+
         }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OutlinedButton(
+            onClick = {
+
+                val gmmIntentUri =
+                    Uri.parse("geo:0,0?q=$city")
+
+                val mapIntent = Intent(
+                    Intent.ACTION_VIEW,
+                    gmmIntentUri
+                )
+
+                mapIntent.setPackage("com.google.android.apps.maps")
+
+                if (mapIntent.resolveActivity(context.packageManager) != null) {
+
+                    context.startActivity(mapIntent)
+
+                } else {
+
+                    val browserIntent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://www.google.com/maps/search/?api=1&query=$city")
+                    )
+
+                    context.startActivity(browserIntent)
+
+                }
+
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Text("🗺 Open in Google Maps")
+
+        }
+
     }
+
 }
