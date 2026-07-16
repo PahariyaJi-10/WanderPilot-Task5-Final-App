@@ -10,6 +10,10 @@ import kotlinx.coroutines.launch
 
 class WeatherViewModel : ViewModel() {
 
+    companion object {
+        private const val API_KEY = "6d1f33003b2afd1a9d717b682d6fd36b"
+    }
+
     private val _temperature = MutableStateFlow("Loading...")
     val temperature: StateFlow<String> = _temperature
 
@@ -25,7 +29,6 @@ class WeatherViewModel : ViewModel() {
 
             try {
 
-                // Map famous destinations to searchable cities
                 val searchCity = when (city.trim().lowercase()) {
 
                     "goa" -> "Panaji"
@@ -39,89 +42,58 @@ class WeatherViewModel : ViewModel() {
                     else -> city
                 }
 
-                val geoResponse =
-                    RetrofitInstance.geocodingApi.searchCity(searchCity)
-
-                if (!geoResponse.isSuccessful ||
-                    geoResponse.body()?.results.isNullOrEmpty()
-                ) {
-
-                    _temperature.value = "City not found"
-                    _location.value = city
-                    return@launch
-                }
-
-                val place = geoResponse.body()!!.results!![0]
-
-                Log.d(
-                    "WeatherSearch",
-                    "Selected: ${place.name}, ${place.country}"
+                val response = RetrofitInstance.weatherApi.getWeather(
+                    city = searchCity,
+                    apiKey = API_KEY
                 )
 
-                _cityName.value = place.name
+                if (response.isSuccessful && response.body() != null) {
 
-                _location.value =
-                    when (city.trim().lowercase()) {
+                    val weather = response.body()!!
 
-                        "goa" -> "Goa, India"
-
-                        "kerala" -> "Kerala, India"
-
-                        "rajasthan" -> "Rajasthan, India"
-
-                        "himachal",
-                        "himachal pradesh" ->
-                            "Himachal Pradesh, India"
-
-                        "uttarakhand" ->
-                            "Uttarakhand, India"
-
-                        "kashmir" ->
-                            "Kashmir, India"
-
-                        else -> {
-                            if (!place.country.isNullOrEmpty())
-                                "${place.name}, ${place.country}"
-                            else
-                                place.name
-                        }
-                    }
-
-                val weatherResponse =
-                    RetrofitInstance.weatherApi.getWeather(
-                        latitude = place.latitude,
-                        longitude = place.longitude
-                    )
-
-                if (weatherResponse.isSuccessful &&
-                    weatherResponse.body() != null
-                ) {
-
-                    val weather =
-                        weatherResponse.body()!!.current_weather
+                    _cityName.value = weather.name
+                    _location.value = weather.name
 
                     _temperature.value =
-                        "${weather.temperature} °C"
+                        "${weather.main.temp} °C"
+
+                    Log.d(
+                        "Weather",
+                        "City: ${weather.name}"
+                    )
+
+                    Log.d(
+                        "Weather",
+                        "Temp: ${weather.main.temp}"
+                    )
 
                 } else {
 
-                    _temperature.value = "Failed to load weather"
-
                     Log.e(
-                        "WeatherAPI",
-                        "HTTP ${weatherResponse.code()}"
+                        "Weather",
+                        "HTTP ${response.code()}"
                     )
+
+                    _temperature.value = "City not found"
+                    _location.value = city
+
                 }
 
             } catch (e: Exception) {
 
-                Log.e("WeatherAPI", "Exception", e)
+                Log.e(
+                    "Weather",
+                    "Exception",
+                    e
+                )
 
-                _temperature.value =
-                    e.localizedMessage ?: "Network Error"
-
+                _temperature.value = "Network Error"
                 _location.value = city
+
             }
+
         }
+
     }
+
 }
