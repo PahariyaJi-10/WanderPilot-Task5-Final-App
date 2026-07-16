@@ -31,6 +31,46 @@ fun DestinationDetailsScreen(
         weatherViewModel.getWeather(city)
     }
 
+    // -----------------------------
+    // Best Time to Visit
+    // -----------------------------
+
+    val bestTime = when (city.trim().lowercase()) {
+
+        "goa" -> "November - February"
+
+        "manali" -> "October - June"
+
+        "jaipur" -> "October - March"
+
+        "kerala" -> "September - March"
+
+        "mumbai" -> "October - February"
+
+        else -> "Depends on local climate and season"
+
+    }
+
+    // -----------------------------
+    // Estimated Budget
+    // -----------------------------
+
+    val budget = when (city.trim().lowercase()) {
+
+        "goa" -> "₹12,000 - ₹25,000"
+
+        "manali" -> "₹10,000 - ₹20,000"
+
+        "jaipur" -> "₹8,000 - ₹18,000"
+
+        "kerala" -> "₹15,000 - ₹30,000"
+
+        "mumbai" -> "₹10,000 - ₹22,000"
+
+        else -> "Varies based on your travel preferences"
+
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,6 +91,10 @@ fun DestinationDetailsScreen(
         )
 
         Spacer(modifier = Modifier.height(20.dp))
+
+        // -----------------------------
+        // Weather
+        // -----------------------------
 
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -78,6 +122,10 @@ fun DestinationDetailsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // -----------------------------
+        // Best Time
+        // -----------------------------
+
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -93,13 +141,17 @@ fun DestinationDetailsScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text("October - March")
+                Text(bestTime)
 
             }
 
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        // -----------------------------
+        // Budget
+        // -----------------------------
 
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -116,13 +168,17 @@ fun DestinationDetailsScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text("₹15,000 - ₹30,000")
+                Text(budget)
 
             }
 
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        // -----------------------------
+        // Travel Tips
+        // -----------------------------
 
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -139,16 +195,21 @@ fun DestinationDetailsScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text("• Check the weather before travelling")
-                Text("• Carry essential documents")
-                Text("• Book hotels in advance")
-                Text("• Explore local food and culture")
+                Text("• Check the latest weather forecast before travelling.")
+                Text("• Carry valid ID and travel documents.")
+                Text("• Book hotels and transport in advance.")
+                Text("• Explore local food, culture and attractions.")
+                Text("• Keep emergency contacts handy.")
 
             }
 
         }
 
         Spacer(modifier = Modifier.height(32.dp))
+
+        // -----------------------------
+        // Plan Trip
+        // -----------------------------
 
         Button(
             onClick = {
@@ -163,16 +224,18 @@ fun DestinationDetailsScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // -----------------------------
+        // Google Maps
+        // -----------------------------
+
         OutlinedButton(
             onClick = {
 
                 val gmmIntentUri =
                     Uri.parse("geo:0,0?q=$city")
 
-                val mapIntent = Intent(
-                    Intent.ACTION_VIEW,
-                    gmmIntentUri
-                )
+                val mapIntent =
+                    Intent(Intent.ACTION_VIEW, gmmIntentUri)
 
                 mapIntent.setPackage("com.google.android.apps.maps")
 
@@ -184,7 +247,9 @@ fun DestinationDetailsScreen(
 
                     val browserIntent = Intent(
                         Intent.ACTION_VIEW,
-                        Uri.parse("https://www.google.com/maps/search/?api=1&query=$city")
+                        Uri.parse(
+                            "https://www.google.com/maps/search/?api=1&query=$city"
+                        )
                     )
 
                     context.startActivity(browserIntent)
